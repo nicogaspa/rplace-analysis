@@ -1,6 +1,7 @@
 import os
+import shutil
 import urllib.request
-import zipfile
+import gzip
 
 OUTPUT_FOLDER = "data"
 
@@ -19,9 +20,11 @@ def unzip_files(start_from=0, until=78):
     for i in range(start_from, until + 1):
         filename = f"2022_place_canvas_history-{str(i).zfill(12)}.csv.gzip"
         print(f"Unzipping file: {filename}")
-        output_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), OUTPUT_FOLDER)
-        with zipfile.ZipFile(filename, 'r') as zip_ref:
-            zip_ref.extractall(output_folder)
+        output_filepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), OUTPUT_FOLDER, filename.replace(".csv.gzip", ".csv"))
+        filepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), OUTPUT_FOLDER, filename)
+        with gzip.open(filepath, 'rb') as f_in:
+            with open(output_filepath, 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
         print(f"\tDone!")
 
 
